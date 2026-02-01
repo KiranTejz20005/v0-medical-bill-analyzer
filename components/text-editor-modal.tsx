@@ -67,10 +67,10 @@ export function TextEditorModal({
             <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
             <div>
               <p className="text-sm text-amber-400 font-medium mb-1">
-                AI extraction temporarily unavailable
+                Running in fallback mode
               </p>
-              <p className="text-xs text-amber-500/70">
-                API rate limit reached or service unavailable. The static analysis engine will analyze your bill with the same accuracy. Please paste or type the bill text below to continue.
+              <p className="text-xs text-amber-500/70 leading-relaxed">
+                AI extraction is temporarily unavailable. Your analysis will continue with our static analysis engine, which provides the same accuracy for detecting billing errors, duplicate charges, and pricing issues. Simply paste or type your bill text below.
               </p>
             </div>
           </div>

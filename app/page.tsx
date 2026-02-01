@@ -160,7 +160,7 @@ export default function BillAnalyzerApp() {
     [runAnalysis, addLog]
   );
 
-  // Handle file upload
+  // Handle file upload with robust error handling
   const handleFileUpload = useCallback(async (file: File) => {
     setIsProcessing(true);
     setError(null);
@@ -168,7 +168,7 @@ export default function BillAnalyzerApp() {
 
     addLog("info", `File uploaded: ${file.name}`, `Size: ${(file.size / 1024).toFixed(2)} KB, Type: ${file.type}`);
 
-    // Validate file
+    // Validate file size
     const maxSize = 10 * 1024 * 1024; // 10MB
     if (file.size > maxSize) {
       addLog("error", "File upload failed: Size limit exceeded", `File size: ${(file.size / 1024 / 1024).toFixed(2)} MB (max: 10 MB)`);
@@ -177,6 +177,7 @@ export default function BillAnalyzerApp() {
       return;
     }
 
+    // Validate file type
     const validTypes = [
       "application/pdf",
       "image/png",
@@ -210,11 +211,20 @@ export default function BillAnalyzerApp() {
         reader.readAsDataURL(file);
       });
 
-      addLog("info", "Calling Gemini Vision API for text extraction");
+      addLog("info", "Calling AI Vision API for text extraction");
 
-      // Call OCR API
+      // Call OCR API with timeout protection
       const mimeType = file.type === "application/pdf" ? "application/pdf" : file.type;
-      const ocrResult = await extractTextFromImage(base64, mimeType);
+      
+      // Wrap API call with timeout
+      const timeoutPromise = new Promise<{ success: false; text: string; error: string }>((resolve) => {
+        setTimeout(() => {
+          resolve({ success: false, text: "", error: "Request timeout - API took too long to respond" });
+        }, 30000); // 30 second timeout
+      });
+      
+      const ocrResultPromise = extractTextFromImage(base64, mimeType);
+      const ocrResult = await Promise.race([ocrResultPromise, timeoutPromise]);
 
       if (ocrResult.success && ocrResult.text) {
         addLog("success", "OCR extraction successful", `Extracted ${ocrResult.text.length} characters`);
@@ -223,7 +233,12 @@ export default function BillAnalyzerApp() {
         setAppState("landing");
         setIsProcessing(false);
       } else {
-        addLog("warning", "OCR extraction failed - falling back to manual entry", ocrResult.error || "Unknown error");
+        // Graceful fallback - show single clear message, no repeated errors
+        const fallbackMessage = ocrResult.error?.includes("rate limit") 
+          ? "AI service rate limited - using manual entry mode"
+          : "AI extraction unavailable - using manual entry mode";
+        
+        addLog("warning", fallbackMessage, ocrResult.error || "Continuing with static analysis");
         setOcrFailed(true);
         setExtractedText("");
         setShowTextEditor(true);
@@ -231,8 +246,9 @@ export default function BillAnalyzerApp() {
         setIsProcessing(false);
       }
     } catch (err) {
+      // Catch-all error handling - never show repeated or confusing errors
       const errorMessage = err instanceof Error ? err.message : "Unknown error";
-      addLog("error", "File processing error", errorMessage);
+      addLog("warning", "Falling back to manual entry mode", errorMessage);
       setOcrFailed(true);
       setExtractedText("");
       setShowTextEditor(true);
