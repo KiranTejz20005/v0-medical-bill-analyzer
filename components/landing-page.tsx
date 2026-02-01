@@ -1,12 +1,10 @@
 "use client";
 
-import React from "react"
-
+import React from "react";
 import { useState, useRef, useCallback, useEffect } from "react";
 import {
   Upload,
   Plus,
-  Triangle,
   AlertTriangle,
   Shield,
   Lock,
@@ -30,9 +28,11 @@ import {
   Scale,
   BookOpen,
   Clock,
+  Triangle, // Declare Triangle here
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { sampleBills } from "@/lib/analysis-engine";
+import { Logo, LogoIcon } from "@/components/logo";
 
 interface LandingPageProps {
   onStartAnalysis: (text: string) => void;
@@ -181,11 +181,9 @@ export function LandingPage({
       {/* Navigation */}
       <nav className={`relative z-50 flex items-center justify-between px-6 py-4 border-b border-zinc-800/50 backdrop-blur-sm ${mounted ? 'animate-fade-in-down' : 'opacity-0'}`}>
         <div className="flex items-center gap-10">
-          <div className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-white rounded-sm flex items-center justify-center transition-transform group-hover:scale-110">
-              <Triangle className="w-4 h-4 fill-black text-black" />
-            </div>
-            <span className="font-semibold tracking-tight text-lg">BILL ANALYZER</span>
+          <div className="flex items-center gap-2.5 group cursor-pointer">
+            <Logo size="md" variant="light" className="transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-lg group-hover:shadow-white/20" />
+            <span className="font-semibold tracking-tight text-lg group-hover:text-zinc-300 transition-colors">BILL ANALYZER</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-zinc-400">
             <a href="#features" className="hover:text-white transition-colors relative group">
@@ -211,16 +209,12 @@ export function LandingPage({
             <Button
               variant="outline"
               onClick={onViewHistory}
-              className="border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800/50 bg-transparent transition-all text-sm"
+              className="border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800/50 bg-transparent transition-all text-sm group"
             >
-              <Clock className="w-4 h-4 mr-2" />
+              <Clock className="w-4 h-4 mr-2 group-hover:animate-pulse" />
               History ({historyCount})
             </Button>
           )}
-          <span className="hidden sm:flex items-center gap-2 text-xs text-zinc-500">
-            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            All systems operational
-          </span>
         </div>
       </nav>
 
@@ -228,19 +222,21 @@ export function LandingPage({
       <main className="relative z-10 max-w-6xl mx-auto px-6 pt-16 pb-24">
         {/* Version Badge */}
         <div className={`flex justify-center mb-10 ${mounted ? 'animate-fade-in-up' : 'opacity-0'}`}>
-          <div className="group flex items-center gap-2 px-4 py-2 bg-zinc-900/50 border border-zinc-800 rounded-full hover:border-zinc-700 transition-colors cursor-pointer">
-            <Sparkles className="w-4 h-4 text-amber-500" />
-            <span className="text-xs text-zinc-400">VERSION 1.0 IS LIVE</span>
-            <ArrowRight className="w-3 h-3 text-zinc-600 group-hover:translate-x-1 transition-transform" />
+          <div className="group flex items-center gap-2 px-4 py-2 bg-zinc-900/50 border border-zinc-800 rounded-full hover:border-amber-800/50 hover:bg-amber-950/20 transition-all duration-300 cursor-pointer hover-scale-bounce">
+            <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />
+            <span className="text-xs text-zinc-400 group-hover:text-amber-400 transition-colors">VERSION 2.0.1 IS LIVE</span>
+            <ArrowRight className="w-3 h-3 text-zinc-600 group-hover:translate-x-1 group-hover:text-amber-500 transition-all" />
           </div>
         </div>
 
         {/* Title */}
         <div className={`text-center mb-8 ${mounted ? 'animate-fade-in-up stagger-1' : 'opacity-0'}`}>
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
-            <span className="gradient-text-white italic font-extrabold">Analyze bills</span>
+            <span className="inline-block bg-gradient-to-b from-white via-white to-zinc-500 bg-clip-text text-transparent italic font-extrabold animate-text-shimmer">
+              Analyze bills
+            </span>
             <br />
-            <span className="text-white text-glow">in seconds.</span>
+            <span className="text-white text-glow inline-block">in seconds.</span>
           </h1>
           <p className="text-lg text-zinc-400 max-w-2xl mx-auto leading-relaxed">
             The developer-first platform for hospital charge auditing.
@@ -254,16 +250,19 @@ export function LandingPage({
           <Button
             onClick={handleAnalyze}
             disabled={!rawBillText.trim() || isProcessing}
-            className="bg-white text-black hover:bg-zinc-200 px-8 py-6 text-base font-medium transition-all hover:scale-105 hover:shadow-lg hover:shadow-white/10"
+            className="group bg-white text-black hover:bg-zinc-200 px-8 py-6 text-base font-medium transition-all hover:scale-105 hover:shadow-lg hover:shadow-white/20 relative overflow-hidden"
           >
-            Start Analysis
-            <ArrowRight className="w-4 h-4 ml-2" />
+            <span className="relative z-10 flex items-center">
+              Start Analysis
+              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+            </span>
           </Button>
           <Button
             variant="outline"
-            className="border-zinc-700 text-white hover:bg-zinc-800/50 px-8 py-6 text-base bg-transparent transition-all hover:border-zinc-600"
+            className="group border-zinc-700 text-white hover:bg-zinc-800/50 px-8 py-6 text-base bg-transparent transition-all hover:border-zinc-500 hover:shadow-lg hover:shadow-zinc-800/20"
             onClick={() => loadSampleBill(0)}
           >
+            <Eye className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
             View Demo
           </Button>
         </div>
@@ -319,9 +318,9 @@ export function LandingPage({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-14 h-14 border border-zinc-700 border-dashed rounded-xl flex items-center justify-center mb-4 hover:bg-zinc-800/50 hover:border-zinc-600 transition-all duration-300 group/btn"
+                className="w-14 h-14 border border-zinc-700 border-dashed rounded-xl flex items-center justify-center mb-4 hover:bg-zinc-800/50 hover:border-amber-700 transition-all duration-300 group/btn hover:scale-110 hover:rotate-90"
               >
-                <Plus className="w-6 h-6 text-zinc-500 group-hover/btn:text-white transition-colors" />
+                <Plus className="w-6 h-6 text-zinc-500 group-hover/btn:text-amber-400 transition-colors" />
               </button>
               <p className="text-sm text-white mb-1 font-medium">Drop your PDF here</p>
               <p className="text-xs text-zinc-500 text-center mb-4 leading-relaxed">
@@ -392,7 +391,7 @@ export function LandingPage({
                 variant="outline"
                 size="sm"
                 onClick={() => loadSampleBill(index)}
-                className="border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800/50 hover:border-zinc-700 text-xs font-medium px-5 bg-transparent transition-all"
+                className="border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800/50 hover:border-zinc-600 text-xs font-medium px-5 bg-transparent transition-all hover:scale-105 hover:-translate-y-0.5 hover:shadow-md hover:shadow-zinc-900/50"
               >
                 {bill.name}
               </Button>
@@ -587,13 +586,11 @@ export function LandingPage({
       <footer className="relative z-10 border-t border-zinc-800/50 py-16 px-6 bg-zinc-950/50">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-5 gap-12 mb-16">
-            <div className="md:col-span-2">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-white rounded-sm flex items-center justify-center">
-                  <Triangle className="w-4 h-4 fill-black text-black" />
-                </div>
-                <span className="font-semibold">BILL ANALYZER</span>
-              </div>
+<div className="md:col-span-2">
+            <div className="flex items-center gap-2.5 mb-4">
+              <Logo size="md" variant="light" />
+              <span className="font-semibold">BILL ANALYZER</span>
+            </div>
               <p className="text-sm text-zinc-500 mb-6 max-w-xs leading-relaxed">
                 Auditing healthcare, one bill at a time. Trusted by thousands of patients and healthcare professionals.
               </p>

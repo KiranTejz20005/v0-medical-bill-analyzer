@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react"
+import React from "react";
+import Triangle from "lucide-react/dist/esm/icons/Triangle"; // Import the Triangle component
 
 import { useState, useEffect } from "react";
 import {
@@ -13,13 +14,13 @@ import {
   ChevronRight,
   Flag,
   CheckCircle,
-  Triangle,
   ArrowRight,
   ArrowLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { AnalysisResult, Finding } from "@/lib/types";
 import { getSeverityColor } from "@/lib/analysis-engine";
+import { Logo } from "@/components/logo";
 
 interface FindingsDashboardProps {
   result: AnalysisResult;
@@ -51,11 +52,11 @@ export function FindingsDashboard({
     setMounted(true);
   }, []);
 
-  const navItems: { id: NavItem; label: string; icon: React.ReactNode }[] = [
-    { id: "overview", label: "Overview", icon: <LayoutGrid className="w-4 h-4" /> },
+  const navItems: { id: NavItem; label: string; icon: React.ReactNode; description?: string }[] = [
+    { id: "overview", label: "Overview", icon: <LayoutGrid className="w-4 h-4" />, description: "Analysis Summary" },
     { id: "deployments", label: "Deployments", icon: <Package className="w-4 h-4" /> },
-    { id: "findings", label: "Findings", icon: <FileText className="w-4 h-4" /> },
-    { id: "logs", label: "Logs", icon: <Clock className="w-4 h-4" /> },
+    { id: "findings", label: "Findings", icon: <FileText className="w-4 h-4" />, description: "Detailed Issues" },
+    { id: "logs", label: "Logs", icon: <Clock className="w-4 h-4" />, description: "Activity Log" },
     { id: "settings", label: "Settings", icon: <Settings className="w-4 h-4" /> },
   ];
 
@@ -93,13 +94,11 @@ export function FindingsDashboard({
     <div className="min-h-screen bg-black text-white flex">
       {/* Sidebar */}
       <aside className={`w-60 border-r border-zinc-800/50 flex flex-col bg-zinc-950/50 ${mounted ? 'animate-slide-in-left' : 'opacity-0'}`}>
-        {/* Logo */}
-        <div className="p-5 flex items-center gap-3">
-          <div className="w-7 h-7 bg-zinc-900 rounded-md flex items-center justify-center border border-zinc-800">
-            <Triangle className="w-3.5 h-3.5 fill-white text-white" />
+{/* Logo */}
+          <div className="p-5 flex items-center gap-3">
+            <Logo size="sm" variant="dark" className="border border-zinc-800" />
+            <span className="font-semibold text-sm tracking-wide">BILL ANALYZER</span>
           </div>
-          <span className="font-semibold text-sm tracking-wide">BILL ANALYZER</span>
-        </div>
 
         {/* Navigation */}
         <nav className="flex-1 px-3 py-4">

@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertTriangle, UserCircle, ArrowUpRight, Download, Triangle, Check, ArrowLeft } from "lucide-react";
+import { AlertTriangle, UserCircle, ArrowUpRight, Download, Check, ArrowLeft, Triangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { AnalysisResult } from "@/lib/types";
+import { Logo } from "@/components/logo";
 
 interface ResultsSummaryProps {
   result: AnalysisResult;
@@ -91,23 +92,24 @@ export function ResultsSummary({
             Back
           </Button>
           <div className="h-6 w-px bg-zinc-800" />
-          <div className="flex items-center gap-2 group cursor-pointer" onClick={onBack}>
-            <div className="w-8 h-8 bg-white rounded-sm flex items-center justify-center transition-transform group-hover:scale-105">
-              <Triangle className="w-4 h-4 fill-black text-black" />
-            </div>
+          <div className="flex items-center gap-2.5 group cursor-pointer" onClick={onBack}>
+            <Logo size="md" variant="light" className="transition-transform group-hover:scale-105" />
             <span className="font-semibold">BillAnalyzer</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-zinc-400 ml-6">
             <button
               type="button"
-              onClick={onBack}
-              className="hover:text-white transition-colors"
+              className="text-white relative"
             >
               Overview
-            </button>
-            <button type="button" className="text-white relative">
-              Analysis
               <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-white rounded-full" />
+            </button>
+            <button 
+              type="button" 
+              onClick={onViewDetails}
+              className="hover:text-white transition-colors"
+            >
+              Analysis
             </button>
             <button
               type="button"

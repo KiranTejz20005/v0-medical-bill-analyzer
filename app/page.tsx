@@ -14,8 +14,12 @@ import {
   parseBillText,
   analyzeBill,
   generateDisputeLetter,
+  sampleBills,
 } from "@/lib/analysis-engine";
 import { extractTextFromImage } from "@/lib/gemini-service";
+
+// Sample OCR result for fallback when API fails
+const FALLBACK_OCR_TEXT = sampleBills[0].content;
 
 export default function BillAnalyzerApp() {
   const [appState, setAppState] = useState<AppState>("landing");
@@ -36,6 +40,10 @@ export default function BillAnalyzerApp() {
   const [analysisHistory, setAnalysisHistory] = useState<AnalysisHistoryItem[]>([]);
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [savedResults, setSavedResults] = useState<Map<string, AnalysisResult>>(new Map());
+  
+  // Toast notification state
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   // Add log helper
   const addLog = useCallback((type: LogEntry["type"], message: string, details?: string) => {
@@ -233,27 +241,36 @@ export default function BillAnalyzerApp() {
         setAppState("landing");
         setIsProcessing(false);
       } else {
-        // Graceful fallback - show single clear message, no repeated errors
-        const fallbackMessage = ocrResult.error?.includes("rate limit") 
-          ? "AI service rate limited - using manual entry mode"
-          : "AI extraction unavailable - using manual entry mode";
+        // API failed - show toast and auto-run analysis with sample data
+        const isRateLimit = ocrResult.error?.includes("rate limit") || ocrResult.error?.includes("429") || ocrResult.error?.includes("quota");
+        const toastMsg = isRateLimit 
+          ? "API rate limit exceeded. Running demo analysis with sample data..."
+          : "AI extraction unavailable. Running demo analysis with sample data...";
         
-        addLog("warning", fallbackMessage, ocrResult.error || "Continuing with static analysis");
-        setOcrFailed(true);
-        setExtractedText("");
-        setShowTextEditor(true);
-        setAppState("landing");
-        setIsProcessing(false);
+        addLog("warning", toastMsg, ocrResult.error || "Using fallback sample data");
+        
+        // Show toast notification
+        setToastMessage(toastMsg);
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 5000);
+        
+        // Auto-run analysis with sample data instead of showing empty editor
+        setOcrFailed(false);
+        runAnalysis(FALLBACK_OCR_TEXT);
       }
     } catch (err) {
-      // Catch-all error handling - never show repeated or confusing errors
+      // Catch-all error handling - auto-fallback to sample data
       const errorMessage = err instanceof Error ? err.message : "Unknown error";
-      addLog("warning", "Falling back to manual entry mode", errorMessage);
-      setOcrFailed(true);
-      setExtractedText("");
-      setShowTextEditor(true);
-      setAppState("landing");
-      setIsProcessing(false);
+      addLog("warning", "API error occurred. Running demo analysis with sample data...", errorMessage);
+      
+      // Show toast notification
+      setToastMessage("API error occurred. Running demo analysis with sample data...");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 5000);
+      
+      // Auto-run analysis with sample data
+      setOcrFailed(false);
+      runAnalysis(FALLBACK_OCR_TEXT);
     }
   }, [addLog]);
 
@@ -439,6 +456,29 @@ export default function BillAnalyzerApp() {
           }}
           isOcrFailed={ocrFailed}
         />
+      )}
+      
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] animate-fade-in-up">
+          <div className="bg-amber-950/90 border border-amber-800/50 text-amber-200 px-6 py-4 rounded-xl shadow-2xl shadow-amber-900/20 backdrop-blur-sm flex items-center gap-3 max-w-md">
+            <div className="w-8 h-8 bg-amber-500/20 rounded-full flex items-center justify-center shrink-0">
+              <svg className="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <p className="text-sm font-medium">{toastMessage}</p>
+            <button 
+              type="button"
+              onClick={() => setShowToast(false)}
+              className="ml-2 text-amber-400 hover:text-amber-300 transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
       )}
     </>
   );
