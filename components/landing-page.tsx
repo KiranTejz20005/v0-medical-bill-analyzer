@@ -230,7 +230,7 @@ export function LandingPage({
         <div className={`flex justify-center mb-10 ${mounted ? 'animate-fade-in-up' : 'opacity-0'}`}>
           <div className="group flex items-center gap-2 px-4 py-2 bg-zinc-900/50 border border-zinc-800 rounded-full hover:border-zinc-700 transition-colors cursor-pointer">
             <Sparkles className="w-4 h-4 text-amber-500" />
-            <span className="text-xs text-zinc-400">VERSION 2.0.1 IS LIVE</span>
+            <span className="text-xs text-zinc-400">VERSION 1.0 IS LIVE</span>
             <ArrowRight className="w-3 h-3 text-zinc-600 group-hover:translate-x-1 transition-transform" />
           </div>
         </div>
@@ -353,7 +353,7 @@ export function LandingPage({
           <div className="flex items-center gap-8">
             <div>
               <p className="text-[10px] text-zinc-500 mb-1 tracking-wider">MODEL</p>
-              <p className="text-sm text-white font-medium">Healthcare-Llama 3 (V1)</p>
+              <p className="text-sm text-white font-medium">Gemini 2.5 Flash </p>
             </div>
             <div className="hidden sm:block w-px h-8 bg-zinc-800" />
             <div>
@@ -566,13 +566,19 @@ export function LandingPage({
                 Our core analysis engine is built on open-source principles. Review our methodology, contribute improvements, or fork for your own use.
               </p>
             </div>
-            <Button
-              variant="outline"
-              className="border-zinc-700 text-white hover:bg-zinc-800/50 shrink-0 bg-transparent hover:scale-105 transition-all"
+            <a
+              href="https://github.com/kiranlanke824/v0-medical-bill-analyzer"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              <Globe className="w-4 h-4 mr-2" />
-              View on GitHub
-            </Button>
+              <Button
+                variant="outline"
+                className="border-zinc-700 text-white hover:bg-zinc-800/50 shrink-0 bg-transparent hover:scale-105 transition-all"
+              >
+                <Globe className="w-4 h-4 mr-2" />
+                View on GitHub
+              </Button>
+            </a>
           </div>
         </section>
       </main>
@@ -629,7 +635,14 @@ export function LandingPage({
               © 2026 BILL ANALYZER INC. ALL RIGHTS RESERVED.
             </p>
             <div className="flex items-center gap-6 text-xs text-zinc-600">
-              <button type="button" className="hover:text-zinc-400 transition-colors">GitHub</button>
+              <a 
+                href="https://github.com/kiranlanke824/v0-medical-bill-analyzer" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-zinc-400 transition-colors"
+              >
+                GitHub
+              </a>
               <button type="button" className="hover:text-zinc-400 transition-colors">Twitter</button>
               <button type="button" className="hover:text-zinc-400 transition-colors">Discord</button>
             </div>
