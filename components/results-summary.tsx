@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertTriangle, UserCircle, ArrowUpRight, Download, Triangle, Check } from "lucide-react";
+import { AlertTriangle, UserCircle, ArrowUpRight, Download, Triangle, Check, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { AnalysisResult } from "@/lib/types";
 
@@ -9,12 +9,14 @@ interface ResultsSummaryProps {
   result: AnalysisResult;
   onViewDetails: () => void;
   onExportPdf: () => void;
+  onBack: () => void;
 }
 
 export function ResultsSummary({
   result,
   onViewDetails,
   onExportPdf,
+  onBack,
 }: ResultsSummaryProps) {
   const [mounted, setMounted] = useState(false);
   const [anomalyCount, setAnomalyCount] = useState(0);
@@ -77,16 +79,26 @@ export function ResultsSummary({
 
       {/* Navigation */}
       <nav className={`relative z-50 flex items-center justify-between px-6 py-4 border-b border-zinc-800/50 backdrop-blur-sm ${mounted ? 'animate-fade-in-down' : 'opacity-0'}`}>
-        <div className="flex items-center gap-10">
-          <div className="flex items-center gap-2 group cursor-pointer">
+        <div className="flex items-center gap-6">
+          <Button
+            variant="ghost"
+            onClick={onBack}
+            className="text-zinc-400 hover:text-white hover:bg-zinc-800/50 transition-all"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
+          <div className="h-6 w-px bg-zinc-800" />
+          <div className="flex items-center gap-2 group cursor-pointer" onClick={onBack}>
             <div className="w-8 h-8 bg-white rounded-sm flex items-center justify-center transition-transform group-hover:scale-105">
               <Triangle className="w-4 h-4 fill-black text-black" />
             </div>
             <span className="font-semibold">BillAnalyzer</span>
           </div>
-          <div className="hidden md:flex items-center gap-8 text-sm text-zinc-400">
+          <div className="hidden md:flex items-center gap-8 text-sm text-zinc-400 ml-6">
             <button
               type="button"
+              onClick={onBack}
               className="hover:text-white transition-colors"
             >
               Overview

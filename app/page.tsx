@@ -204,6 +204,7 @@ export default function BillAnalyzerApp() {
           result={analysisResult}
           onViewDetails={handleViewDetails}
           onExportPdf={handleExportPdf}
+          onBack={handleNewAudit}
         />
         {disputeLetter && (
           <DisputeLetterModal
