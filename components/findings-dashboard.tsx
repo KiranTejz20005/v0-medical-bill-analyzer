@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Triangle from "lucide-react/dist/esm/icons/Triangle"; // Import the Triangle component
 
 import { useState, useEffect } from "react";
 import {
@@ -16,6 +15,14 @@ import {
   CheckCircle,
   ArrowRight,
   ArrowLeft,
+  X,
+  AlertTriangle,
+  DollarSign,
+  Tag,
+  FileWarning,
+  Copy,
+  Check,
+  Download,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { AnalysisResult, Finding } from "@/lib/types";
@@ -47,6 +54,8 @@ export function FindingsDashboard({
   const [flaggedItems, setFlaggedItems] = useState<Set<string>>(new Set());
   const [resolvedItems, setResolvedItems] = useState<Set<string>>(new Set());
   const [mounted, setMounted] = useState(false);
+  const [selectedFinding, setSelectedFinding] = useState<Finding | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -84,21 +93,65 @@ export function FindingsDashboard({
     });
   };
 
+  const flagAllHighSeverity = () => {
+    const highSeverityIds = result.findings
+      .filter((f) => f.severity === "HIGH")
+      .map((f) => f.id);
+    setFlaggedItems(new Set([...flaggedItems, ...highSeverityIds]));
+  };
+
+  const exportToCsv = () => {
+    const headers = ["ID", "Title", "Severity", "Amount", "Category", "Description", "Action Required"];
+    const rows = result.findings.map((f) => [
+      f.id,
+      f.title,
+      f.severity,
+      f.amount.toFixed(2),
+      f.category,
+      f.description.replace(/,/g, ";"),
+      f.actionRequired || "N/A",
+    ]);
+    
+    const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `findings-${result.patientId}-${new Date().toISOString().split("T")[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   const severityCounts = {
     HIGH: result.findings.filter((f) => f.severity === "HIGH").length,
     MEDIUM: result.findings.filter((f) => f.severity === "MEDIUM").length,
     LOW: result.findings.filter((f) => f.severity === "LOW").length,
   };
 
+  const handleNavClick = (navId: NavItem) => {
+    setActiveNav(navId);
+    if (navId === "overview") {
+      onBack();
+    } else if (navId === "logs") {
+      onViewLogs();
+    } else if (navId === "settings") {
+      setShowSettings(true);
+    } else if (navId === "deployments") {
+      // Show deployments view (analysis versions)
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-white flex">
       {/* Sidebar */}
       <aside className={`w-60 border-r border-zinc-800/50 flex flex-col bg-zinc-950/50 ${mounted ? 'animate-slide-in-left' : 'opacity-0'}`}>
-{/* Logo */}
-          <div className="p-5 flex items-center gap-3">
-            <Logo size="sm" variant="dark" className="border border-zinc-800" />
-            <span className="font-semibold text-sm tracking-wide">BILL ANALYZER</span>
-          </div>
+        {/* Logo */}
+        <div className="p-5 flex items-center gap-3">
+          <Logo size="sm" variant="dark" className="border border-zinc-800" />
+          <span className="font-semibold text-sm tracking-wide">BILL ANALYZER</span>
+        </div>
 
         {/* Navigation */}
         <nav className="flex-1 px-3 py-4">
@@ -106,14 +159,7 @@ export function FindingsDashboard({
             <button
               key={item.id}
               type="button"
-              onClick={() => {
-                setActiveNav(item.id);
-                if (item.id === "overview") {
-                  onBack();
-                } else if (item.id === "logs") {
-                  onViewLogs();
-                }
-              }}
+              onClick={() => handleNavClick(item.id)}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm mb-1 transition-all duration-200 ${
                 activeNav === item.id
                   ? "bg-zinc-800/80 text-white"
@@ -196,6 +242,7 @@ export function FindingsDashboard({
                     isResolved={resolvedItems.has(finding.id)}
                     onFlag={() => toggleFlag(finding.id)}
                     onResolve={() => toggleResolved(finding.id)}
+                    onViewDetails={() => setSelectedFinding(finding)}
                     index={index}
                     mounted={mounted}
                   />
@@ -253,12 +300,14 @@ export function FindingsDashboard({
                 <p className="text-sm text-zinc-400 font-mono leading-relaxed">
                   92% of duplicate charges are successfully mitigated via itemized
                   audit requests.{" "}
-                  <button
-                    type="button"
+                  <a
+                    href="https://github.com/kiranlanke824/v0-medical-bill-analyzer"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-white hover:underline inline-flex items-center gap-1"
                   >
                     Read Documentation <ArrowRight className="w-3 h-3" />
-                  </button>
+                  </a>
                 </p>
               </div>
 
@@ -268,15 +317,27 @@ export function FindingsDashboard({
                   QUICK ACTIONS
                 </h3>
                 <div className="space-y-2">
-                  <button type="button" className="w-full text-left px-4 py-3 bg-zinc-800/30 rounded-lg text-sm hover:bg-zinc-800/50 transition-colors flex items-center justify-between group">
+                  <button 
+                    type="button" 
+                    onClick={flagAllHighSeverity}
+                    className="w-full text-left px-4 py-3 bg-zinc-800/30 rounded-lg text-sm hover:bg-zinc-800/50 transition-colors flex items-center justify-between group"
+                  >
                     <span>Flag all high severity</span>
                     <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:translate-x-1 transition-transform" />
                   </button>
-                  <button type="button" className="w-full text-left px-4 py-3 bg-zinc-800/30 rounded-lg text-sm hover:bg-zinc-800/50 transition-colors flex items-center justify-between group">
+                  <button 
+                    type="button" 
+                    onClick={onGenerateReport}
+                    className="w-full text-left px-4 py-3 bg-zinc-800/30 rounded-lg text-sm hover:bg-zinc-800/50 transition-colors flex items-center justify-between group"
+                  >
                     <span>Generate dispute letter</span>
                     <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:translate-x-1 transition-transform" />
                   </button>
-                  <button type="button" className="w-full text-left px-4 py-3 bg-zinc-800/30 rounded-lg text-sm hover:bg-zinc-800/50 transition-colors flex items-center justify-between group">
+                  <button 
+                    type="button" 
+                    onClick={exportToCsv}
+                    className="w-full text-left px-4 py-3 bg-zinc-800/30 rounded-lg text-sm hover:bg-zinc-800/50 transition-colors flex items-center justify-between group"
+                  >
                     <span>Export to CSV</span>
                     <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:translate-x-1 transition-transform" />
                   </button>
@@ -286,6 +347,23 @@ export function FindingsDashboard({
           </div>
         </div>
       </main>
+
+      {/* Finding Detail Modal */}
+      {selectedFinding && (
+        <FindingDetailModal
+          finding={selectedFinding}
+          onClose={() => setSelectedFinding(null)}
+          isFlagged={flaggedItems.has(selectedFinding.id)}
+          isResolved={resolvedItems.has(selectedFinding.id)}
+          onFlag={() => toggleFlag(selectedFinding.id)}
+          onResolve={() => toggleResolved(selectedFinding.id)}
+        />
+      )}
+
+      {/* Settings Modal */}
+      {showSettings && (
+        <SettingsModal onClose={() => setShowSettings(false)} />
+      )}
     </div>
   );
 }
@@ -331,6 +409,7 @@ interface FindingCardProps {
   isResolved: boolean;
   onFlag: () => void;
   onResolve: () => void;
+  onViewDetails: () => void;
   index: number;
   mounted: boolean;
 }
@@ -341,6 +420,7 @@ function FindingCard({
   isResolved,
   onFlag,
   onResolve,
+  onViewDetails,
   index,
   mounted,
 }: FindingCardProps) {
@@ -382,6 +462,7 @@ function FindingCard({
       <div className="flex items-center justify-between pt-4 border-t border-zinc-800/50">
         <button
           type="button"
+          onClick={onViewDetails}
           className="text-xs text-zinc-400 hover:text-white flex items-center gap-1.5 transition-colors group/btn"
         >
           DETAILS <ChevronRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
@@ -393,6 +474,7 @@ function FindingCard({
             className={`p-2 rounded-lg hover:bg-zinc-800/50 transition-all ${
               isFlagged ? "text-amber-500 bg-amber-500/10" : "text-zinc-600 hover:text-zinc-400"
             }`}
+            title={isFlagged ? "Remove flag" : "Flag for review"}
           >
             <Flag className="w-4 h-4" />
           </button>
@@ -402,9 +484,334 @@ function FindingCard({
             className={`p-2 rounded-lg hover:bg-zinc-800/50 transition-all ${
               isResolved ? "text-green-500 bg-green-500/10" : "text-zinc-600 hover:text-zinc-400"
             }`}
+            title={isResolved ? "Mark as unresolved" : "Mark as resolved"}
           >
             <CheckCircle className="w-4 h-4" />
           </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+interface FindingDetailModalProps {
+  finding: Finding;
+  onClose: () => void;
+  isFlagged: boolean;
+  isResolved: boolean;
+  onFlag: () => void;
+  onResolve: () => void;
+}
+
+function FindingDetailModal({
+  finding,
+  onClose,
+  isFlagged,
+  isResolved,
+  onFlag,
+  onResolve,
+}: FindingDetailModalProps) {
+  const [copied, setCopied] = useState(false);
+
+  const copyDetails = () => {
+    const text = `
+Finding: ${finding.title}
+Severity: ${finding.severity}
+Amount: $${finding.amount.toFixed(2)}
+Category: ${finding.category}
+Description: ${finding.description}
+Action Required: ${finding.actionRequired || "None"}
+    `.trim();
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const getSeverityDescription = (severity: string) => {
+    switch (severity) {
+      case "HIGH":
+        return "This issue requires immediate attention and has a high likelihood of successful dispute.";
+      case "MEDIUM":
+        return "This issue should be reviewed and may require verification against your insurance policy.";
+      case "LOW":
+        return "This is a minor discrepancy that may be worth noting but has lower recovery potential.";
+      default:
+        return "";
+    }
+  };
+
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case "duplicate":
+        return <Copy className="w-5 h-5" />;
+      case "upcoding":
+        return <AlertTriangle className="w-5 h-5" />;
+      case "pricing":
+        return <DollarSign className="w-5 h-5" />;
+      case "math":
+        return <FileWarning className="w-5 h-5" />;
+      default:
+        return <Tag className="w-5 h-5" />;
+    }
+  };
+
+  const getRecommendedActions = (finding: Finding) => {
+    const actions = [];
+    
+    if (finding.severity === "HIGH") {
+      actions.push("Request itemized statement from provider");
+      actions.push("File formal dispute with billing department");
+    }
+    
+    if (finding.category === "duplicate") {
+      actions.push("Cross-reference with previous statements");
+      actions.push("Request duplicate charge removal");
+    } else if (finding.category === "upcoding") {
+      actions.push("Request medical records for verification");
+      actions.push("Compare with standard procedure codes");
+    } else if (finding.category === "pricing") {
+      actions.push("Request fair pricing adjustment");
+      actions.push("Compare with regional Medicare rates");
+    }
+    
+    actions.push("Document all communications");
+    
+    return actions;
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-fade-in-up"
+        onClick={onClose}
+      />
+      
+      {/* Modal */}
+      <div className="relative w-full max-w-2xl bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl animate-scale-in overflow-hidden">
+        {/* Header */}
+        <div className="flex items-start justify-between p-6 border-b border-zinc-800">
+          <div className="flex items-start gap-4">
+            <div className={`p-3 rounded-xl ${
+              finding.severity === "HIGH" ? "bg-red-500/10 text-red-500" :
+              finding.severity === "MEDIUM" ? "bg-amber-500/10 text-amber-500" :
+              "bg-zinc-500/10 text-zinc-500"
+            }`}>
+              {getCategoryIcon(finding.category)}
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white mb-1">{finding.title}</h2>
+              <div className="flex items-center gap-3">
+                <span className={`px-2 py-0.5 text-xs font-medium rounded ${getSeverityColor(finding.severity)}`}>
+                  {finding.severity}
+                </span>
+                <span className="text-xs text-zinc-500 uppercase tracking-wide">{finding.category}</span>
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-2 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 max-h-[60vh] overflow-y-auto">
+          {/* Amount */}
+          <div className="bg-zinc-800/50 rounded-xl p-4 mb-6">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-zinc-400">Potential Recovery Amount</span>
+              <span className="text-3xl font-bold font-mono text-red-500">
+                -${finding.amount.toFixed(2)}
+              </span>
+            </div>
+          </div>
+
+          {/* Description */}
+          <div className="mb-6">
+            <h3 className="text-xs text-zinc-500 uppercase tracking-widest mb-3">Description</h3>
+            <p className="text-zinc-300 leading-relaxed">{finding.description}</p>
+          </div>
+
+          {/* Severity Explanation */}
+          <div className="mb-6">
+            <h3 className="text-xs text-zinc-500 uppercase tracking-widest mb-3">Severity Assessment</h3>
+            <p className="text-zinc-400 text-sm leading-relaxed">{getSeverityDescription(finding.severity)}</p>
+          </div>
+
+          {/* Action Required */}
+          {finding.actionRequired && (
+            <div className="mb-6">
+              <h3 className="text-xs text-zinc-500 uppercase tracking-widest mb-3">Immediate Action</h3>
+              <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4">
+                <p className="text-amber-400 font-medium">{finding.actionRequired}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Recommended Actions */}
+          <div className="mb-6">
+            <h3 className="text-xs text-zinc-500 uppercase tracking-widest mb-3">Recommended Actions</h3>
+            <ul className="space-y-2">
+              {getRecommendedActions(finding).map((action, index) => (
+                <li key={index} className="flex items-start gap-3 text-sm text-zinc-400">
+                  <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                  {action}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Status */}
+          <div className="flex items-center gap-4 p-4 bg-zinc-800/30 rounded-xl">
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-zinc-500">Flagged:</span>
+              <span className={`text-sm font-medium ${isFlagged ? "text-amber-500" : "text-zinc-600"}`}>
+                {isFlagged ? "Yes" : "No"}
+              </span>
+            </div>
+            <div className="w-px h-4 bg-zinc-700" />
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-zinc-500">Status:</span>
+              <span className={`text-sm font-medium ${isResolved ? "text-green-500" : "text-zinc-400"}`}>
+                {isResolved ? "Resolved" : "Pending"}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-between p-6 border-t border-zinc-800 bg-zinc-950/50">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onFlag}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                isFlagged 
+                  ? "bg-amber-500/10 text-amber-500 border border-amber-500/30" 
+                  : "bg-zinc-800 text-zinc-400 hover:text-white"
+              }`}
+            >
+              <Flag className="w-4 h-4" />
+              {isFlagged ? "Unflag" : "Flag"}
+            </button>
+            <button
+              type="button"
+              onClick={onResolve}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                isResolved 
+                  ? "bg-green-500/10 text-green-500 border border-green-500/30" 
+                  : "bg-zinc-800 text-zinc-400 hover:text-white"
+              }`}
+            >
+              <CheckCircle className="w-4 h-4" />
+              {isResolved ? "Unresolve" : "Resolve"}
+            </button>
+          </div>
+          <button
+            type="button"
+            onClick={copyDetails}
+            className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-lg hover:bg-zinc-200 transition-colors"
+          >
+            {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+            {copied ? "Copied!" : "Copy Details"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+interface SettingsModalProps {
+  onClose: () => void;
+}
+
+function SettingsModal({ onClose }: SettingsModalProps) {
+  const [autoFlag, setAutoFlag] = useState(true);
+  const [showLowSeverity, setShowLowSeverity] = useState(true);
+  const [emailNotifications, setEmailNotifications] = useState(false);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-fade-in-up"
+        onClick={onClose}
+      />
+      
+      {/* Modal */}
+      <div className="relative w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl animate-scale-in">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-zinc-800">
+          <h2 className="text-xl font-bold text-white">Settings</h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-2 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 space-y-6">
+          {/* Auto Flag High Severity */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-white">Auto-flag high severity</h3>
+              <p className="text-xs text-zinc-500 mt-1">Automatically flag high severity findings</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setAutoFlag(!autoFlag)}
+              className={`w-11 h-6 rounded-full transition-colors ${autoFlag ? "bg-green-500" : "bg-zinc-700"}`}
+            >
+              <span className={`block w-5 h-5 bg-white rounded-full transform transition-transform ${autoFlag ? "translate-x-5" : "translate-x-0.5"}`} />
+            </button>
+          </div>
+
+          {/* Show Low Severity */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-white">Show low severity issues</h3>
+              <p className="text-xs text-zinc-500 mt-1">Display findings with low severity</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowLowSeverity(!showLowSeverity)}
+              className={`w-11 h-6 rounded-full transition-colors ${showLowSeverity ? "bg-green-500" : "bg-zinc-700"}`}
+            >
+              <span className={`block w-5 h-5 bg-white rounded-full transform transition-transform ${showLowSeverity ? "translate-x-5" : "translate-x-0.5"}`} />
+            </button>
+          </div>
+
+          {/* Email Notifications */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-white">Email notifications</h3>
+              <p className="text-xs text-zinc-500 mt-1">Receive analysis reports via email</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setEmailNotifications(!emailNotifications)}
+              className={`w-11 h-6 rounded-full transition-colors ${emailNotifications ? "bg-green-500" : "bg-zinc-700"}`}
+            >
+              <span className={`block w-5 h-5 bg-white rounded-full transform transition-transform ${emailNotifications ? "translate-x-5" : "translate-x-0.5"}`} />
+            </button>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex justify-end p-6 border-t border-zinc-800">
+          <Button
+            onClick={onClose}
+            className="bg-white text-black hover:bg-zinc-200"
+          >
+            Done
+          </Button>
         </div>
       </div>
     </div>

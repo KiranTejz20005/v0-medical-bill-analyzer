@@ -221,27 +221,28 @@ export function LandingPage({
       {/* Hero Section */}
       <main className="relative z-10 max-w-6xl mx-auto px-6 pt-16 pb-24">
         {/* Version Badge */}
-        <div className={`flex justify-center mb-10 ${mounted ? 'animate-fade-in-up' : 'opacity-0'}`}>
-          <div className="group flex items-center gap-2 px-4 py-2 bg-zinc-900/50 border border-zinc-800 rounded-full hover:border-amber-800/50 hover:bg-amber-950/20 transition-all duration-300 cursor-pointer hover-scale-bounce">
-            <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />
-            <span className="text-xs text-zinc-400 group-hover:text-amber-400 transition-colors">VERSION 2.0.1 IS LIVE</span>
-            <ArrowRight className="w-3 h-3 text-zinc-600 group-hover:translate-x-1 group-hover:text-amber-500 transition-all" />
+        <div className={`flex justify-center mb-12 ${mounted ? 'animate-fade-in-up' : 'opacity-0'}`}>
+          <div className="group flex items-center gap-3 px-5 py-2.5 bg-zinc-900/80 border border-zinc-700/50 rounded-full hover:border-zinc-600 transition-all duration-300 cursor-pointer">
+            <span className="text-xs text-zinc-300 tracking-widest font-medium">DEPLOYING V2.1.0 TO PRODUCTION</span>
+            <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
           </div>
         </div>
 
         {/* Title */}
-        <div className={`text-center mb-8 ${mounted ? 'animate-fade-in-up stagger-1' : 'opacity-0'}`}>
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
-            <span className="inline-block bg-gradient-to-b from-white via-white to-zinc-500 bg-clip-text text-transparent italic font-extrabold animate-text-shimmer">
-              Analyze bills
+        <div className={`text-center mb-10 ${mounted ? 'animate-fade-in-up stagger-1' : 'opacity-0'}`}>
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-8">
+            <span className="inline-block bg-gradient-to-b from-white via-zinc-300 to-zinc-600 bg-clip-text text-transparent italic font-extrabold">
+              Medical billing,
             </span>
             <br />
-            <span className="text-white text-glow inline-block">in seconds.</span>
+            <span className="inline-block bg-gradient-to-b from-white via-zinc-300 to-zinc-600 bg-clip-text text-transparent italic font-extrabold">
+              audited instantly.
+            </span>
           </h1>
-          <p className="text-lg text-zinc-400 max-w-2xl mx-auto leading-relaxed">
-            The developer-first platform for hospital charge auditing.
+          <p className="text-lg text-zinc-500 max-w-2xl mx-auto leading-relaxed">
+            The precision platform for hospital charge auditing.
             <br className="hidden sm:block" />
-            Identify errors, find fair pricing, and negotiate with data.
+            Identify errors with clinical-grade accuracy.
           </p>
         </div>
 
