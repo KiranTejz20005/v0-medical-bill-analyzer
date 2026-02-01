@@ -1,12 +1,10 @@
 "use client";
 
-import React from "react"
-
+import React from "react";
 import { useState, useRef, useCallback, useEffect } from "react";
 import {
   Upload,
   Plus,
-  Triangle,
   AlertTriangle,
   Shield,
   Lock,
@@ -30,9 +28,11 @@ import {
   Scale,
   BookOpen,
   Clock,
+  Triangle, // Declare Triangle here
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { sampleBills } from "@/lib/analysis-engine";
+import { Logo, LogoIcon } from "@/components/logo";
 
 interface LandingPageProps {
   onStartAnalysis: (text: string) => void;
@@ -181,10 +181,8 @@ export function LandingPage({
       {/* Navigation */}
       <nav className={`relative z-50 flex items-center justify-between px-6 py-4 border-b border-zinc-800/50 backdrop-blur-sm ${mounted ? 'animate-fade-in-down' : 'opacity-0'}`}>
         <div className="flex items-center gap-10">
-          <div className="flex items-center gap-2 group cursor-pointer">
-            <div className="w-8 h-8 bg-white rounded-sm flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-lg group-hover:shadow-white/20">
-              <Triangle className="w-4 h-4 fill-black text-black transition-transform group-hover:scale-110" />
-            </div>
+          <div className="flex items-center gap-2.5 group cursor-pointer">
+            <Logo size="md" variant="light" className="transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-lg group-hover:shadow-white/20" />
             <span className="font-semibold tracking-tight text-lg group-hover:text-zinc-300 transition-colors">BILL ANALYZER</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-zinc-400">
@@ -588,13 +586,11 @@ export function LandingPage({
       <footer className="relative z-10 border-t border-zinc-800/50 py-16 px-6 bg-zinc-950/50">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-5 gap-12 mb-16">
-            <div className="md:col-span-2">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-white rounded-sm flex items-center justify-center">
-                  <Triangle className="w-4 h-4 fill-black text-black" />
-                </div>
-                <span className="font-semibold">BILL ANALYZER</span>
-              </div>
+<div className="md:col-span-2">
+            <div className="flex items-center gap-2.5 mb-4">
+              <Logo size="md" variant="light" />
+              <span className="font-semibold">BILL ANALYZER</span>
+            </div>
               <p className="text-sm text-zinc-500 mb-6 max-w-xs leading-relaxed">
                 Auditing healthcare, one bill at a time. Trusted by thousands of patients and healthcare professionals.
               </p>

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import {
-  Triangle,
   ArrowLeft,
   Info,
   AlertTriangle,
@@ -11,9 +10,11 @@ import {
   Trash2,
   Download,
   Filter,
+  Triangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { LogEntry } from "@/lib/types";
+import { Logo } from "@/components/logo";
 
 interface LogsViewProps {
   logs: LogEntry[];
@@ -90,10 +91,8 @@ export function LogsView({ logs, onBack, onClearLogs }: LogsViewProps) {
             Back
           </Button>
           <div className="h-6 w-px bg-zinc-800" />
-          <div className="flex items-center gap-2 group cursor-pointer" onClick={onBack}>
-            <div className="w-8 h-8 bg-white rounded-sm flex items-center justify-center transition-transform group-hover:scale-105">
-              <Triangle className="w-4 h-4 fill-black text-black" />
-            </div>
+          <div className="flex items-center gap-2.5 group cursor-pointer" onClick={onBack}>
+            <Logo size="md" variant="light" className="transition-transform group-hover:scale-105" />
             <span className="font-semibold">BillAnalyzer</span>
           </div>
         </div>
