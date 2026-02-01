@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Check, Circle } from "lucide-react";
+import { Check, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface LoadingScreenProps {
   stage: "extracting" | "analyzing" | "generating";
+  onCancel?: () => void;
 }
 
 interface AnalysisStep {
@@ -14,7 +16,7 @@ interface AnalysisStep {
   subtext: string;
 }
 
-export function LoadingScreen({ stage }: LoadingScreenProps) {
+export function LoadingScreen({ stage, onCancel }: LoadingScreenProps) {
   const [dots, setDots] = useState("");
   const [steps, setSteps] = useState<AnalysisStep[]>([
     { id: "parse", label: "Parsing document structure", status: "pending", subtext: "Identifying line items and codes" },
@@ -225,6 +227,18 @@ export function LoadingScreen({ stage }: LoadingScreenProps) {
             LOCAL ENGINE ACTIVE
           </span>
         </div>
+
+        {/* Cancel Button */}
+        {onCancel && (
+          <Button
+            variant="ghost"
+            onClick={onCancel}
+            className="mt-8 text-zinc-500 hover:text-white hover:bg-zinc-800/50 transition-all"
+          >
+            <X className="w-4 h-4 mr-2" />
+            Cancel Analysis
+          </Button>
+        )}
       </main>
 
       {/* Footer */}

@@ -29,6 +29,7 @@ import {
   CloudOff,
   Scale,
   BookOpen,
+  Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { sampleBills } from "@/lib/analysis-engine";
@@ -38,6 +39,8 @@ interface LandingPageProps {
   onFileUpload: (file: File) => void;
   isProcessing: boolean;
   error: string | null;
+  onViewHistory: () => void;
+  historyCount: number;
 }
 
 export function LandingPage({
@@ -45,6 +48,8 @@ export function LandingPage({
   onFileUpload,
   isProcessing,
   error,
+  onViewHistory,
+  historyCount,
 }: LandingPageProps) {
   const [rawBillText, setRawBillText] = useState("");
   const [isDragging, setIsDragging] = useState(false);
@@ -168,9 +173,10 @@ export function LandingPage({
       {/* Animated background grid */}
       <div className="fixed inset-0 grid-pattern opacity-50" />
       
-      {/* Gradient orbs */}
-      <div className="fixed top-0 left-1/4 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl" />
-      <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-zinc-500/5 rounded-full blur-3xl" />
+      {/* Gradient orbs - enhanced glow effects */}
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-zinc-800/20 via-zinc-900/10 to-transparent rounded-full blur-3xl" />
+      <div className="fixed top-20 left-1/3 w-72 h-72 bg-amber-500/5 rounded-full blur-3xl animate-subtle-pulse" />
+      <div className="fixed top-40 right-1/3 w-96 h-96 bg-zinc-500/5 rounded-full blur-3xl" />
 
       {/* Navigation */}
       <nav className={`relative z-50 flex items-center justify-between px-6 py-4 border-b border-zinc-800/50 backdrop-blur-sm ${mounted ? 'animate-fade-in-down' : 'opacity-0'}`}>
@@ -200,8 +206,18 @@ export function LandingPage({
             </a>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="hidden sm:flex items-center gap-2 text-xs text-zinc-500 mr-4">
+        <div className="flex items-center gap-4">
+          {historyCount > 0 && (
+            <Button
+              variant="outline"
+              onClick={onViewHistory}
+              className="border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800/50 bg-transparent transition-all text-sm"
+            >
+              <Clock className="w-4 h-4 mr-2" />
+              History ({historyCount})
+            </Button>
+          )}
+          <span className="hidden sm:flex items-center gap-2 text-xs text-zinc-500">
             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
             All systems operational
           </span>
@@ -222,9 +238,9 @@ export function LandingPage({
         {/* Title */}
         <div className={`text-center mb-8 ${mounted ? 'animate-fade-in-up stagger-1' : 'opacity-0'}`}>
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
-            <span className="gradient-text italic">Analyze bills</span>
+            <span className="gradient-text-white italic font-extrabold">Analyze bills</span>
             <br />
-            <span className="text-white">in seconds.</span>
+            <span className="text-white text-glow">in seconds.</span>
           </h1>
           <p className="text-lg text-zinc-400 max-w-2xl mx-auto leading-relaxed">
             The developer-first platform for hospital charge auditing.
@@ -263,7 +279,7 @@ export function LandingPage({
         {/* Input Sections */}
         <div className={`grid md:grid-cols-2 gap-4 mb-6 max-w-4xl mx-auto ${mounted ? 'animate-fade-in-up stagger-3' : 'opacity-0'}`}>
           {/* Raw Bill Data */}
-          <div className="group bg-zinc-900/50 rounded-xl overflow-hidden border border-zinc-800/50 hover:border-zinc-700/50 transition-all duration-300 hover:shadow-lg hover:shadow-white/5">
+          <div className="group bg-zinc-900/50 rounded-xl overflow-hidden border border-zinc-800/50 hover:border-zinc-700/50 transition-all duration-300 hover-glow card-shine">
             <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800/50 bg-zinc-900/30">
               <div className="flex items-center gap-2 text-xs text-zinc-400">
                 <FileText className="w-3.5 h-3.5" />
@@ -284,13 +300,13 @@ export function LandingPage({
           </div>
 
           {/* PDF Upload */}
-          <div className="group bg-zinc-900/50 rounded-xl overflow-hidden border border-zinc-800/50 hover:border-zinc-700/50 transition-all duration-300 hover:shadow-lg hover:shadow-white/5">
+          <div className="group bg-zinc-900/50 rounded-xl overflow-hidden border border-zinc-800/50 hover:border-amber-900/30 transition-all duration-300 hover-glow card-shine">
             <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800/50 bg-zinc-900/30">
               <div className="flex items-center gap-2 text-xs text-zinc-400">
                 <Database className="w-3.5 h-3.5" />
                 <span className="font-medium tracking-wide">PDF ANALYZER</span>
               </div>
-              <span className="text-[10px] text-amber-500 font-medium">MAX 5MB</span>
+              <span className="text-[10px] text-amber-500 font-medium animate-subtle-pulse">MAX 5MB</span>
             </div>
             <div
               onDragOver={handleDragOver}
@@ -387,13 +403,13 @@ export function LandingPage({
         {/* Features Section */}
         <section id="features" className="mb-32 scroll-mt-24">
           <div className="text-center mb-16">
-            <span className="inline-block px-3 py-1 text-xs bg-zinc-900 border border-zinc-800 rounded-full text-zinc-400 mb-4">
+            <span className="inline-block px-3 py-1 text-xs bg-zinc-900 border border-zinc-800 rounded-full text-zinc-400 mb-4 hover:border-zinc-700 transition-colors cursor-default">
               FEATURES
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-balance">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-balance gradient-text-white">
               Everything you need to audit medical bills
             </h2>
-            <p className="text-zinc-400 max-w-2xl mx-auto">
+            <p className="text-zinc-400 max-w-2xl mx-auto leading-relaxed">
               Powered by advanced AI and comprehensive healthcare pricing data to help you identify billing errors and recover overcharges.
             </p>
           </div>
@@ -402,14 +418,14 @@ export function LandingPage({
             {features.map((feature, index) => (
               <div
                 key={feature.title}
-                className="group p-6 bg-zinc-900/30 rounded-xl border border-zinc-800/50 hover:border-zinc-700/50 transition-all duration-300 hover:bg-zinc-900/50 hover:-translate-y-1"
+                className="group p-6 bg-zinc-900/30 rounded-xl border border-zinc-800/50 hover:border-zinc-700/50 transition-all duration-300 hover:bg-zinc-900/50 hover:-translate-y-1 hover-glow card-shine"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="w-10 h-10 bg-zinc-800/50 rounded-lg flex items-center justify-center mb-4 text-zinc-400 group-hover:text-white group-hover:bg-zinc-800 transition-all">
+                <div className="w-10 h-10 bg-zinc-800/50 rounded-lg flex items-center justify-center mb-4 text-zinc-400 group-hover:text-white group-hover:bg-zinc-700 group-hover:scale-110 transition-all duration-300">
                   {feature.icon}
                 </div>
-                <h3 className="text-white font-semibold mb-2">{feature.title}</h3>
-                <p className="text-sm text-zinc-500 leading-relaxed">
+                <h3 className="text-white font-semibold mb-2 group-hover:gradient-text-white transition-all">{feature.title}</h3>
+                <p className="text-sm text-zinc-500 leading-relaxed group-hover:text-zinc-400 transition-colors">
                   {feature.description}
                 </p>
               </div>
@@ -420,13 +436,13 @@ export function LandingPage({
         {/* Security Section */}
         <section id="security" className="mb-32 scroll-mt-24">
           <div className="text-center mb-16">
-            <span className="inline-block px-3 py-1 text-xs bg-zinc-900 border border-zinc-800 rounded-full text-zinc-400 mb-4">
+            <span className="inline-block px-3 py-1 text-xs bg-green-950/50 border border-green-900/50 rounded-full text-green-400 mb-4 hover:border-green-800/50 transition-colors cursor-default">
               SECURITY
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-balance">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-balance gradient-text-white">
               Your data security is our priority
             </h2>
-            <p className="text-zinc-400 max-w-2xl mx-auto">
+            <p className="text-zinc-400 max-w-2xl mx-auto leading-relaxed">
               Enterprise-grade security measures to protect your sensitive medical information at every step.
             </p>
           </div>
@@ -435,14 +451,14 @@ export function LandingPage({
             {securityFeatures.map((feature, index) => (
               <div
                 key={feature.title}
-                className="group flex gap-5 p-6 bg-zinc-900/30 rounded-xl border border-zinc-800/50 hover:border-zinc-700/50 transition-all duration-300"
+                className="group flex gap-5 p-6 bg-zinc-900/30 rounded-xl border border-zinc-800/50 hover:border-green-900/30 transition-all duration-300 hover-glow card-shine"
               >
-                <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center text-green-500 shrink-0 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center text-green-500 shrink-0 group-hover:scale-110 group-hover:bg-green-500/20 transition-all duration-300">
                   {feature.icon}
                 </div>
                 <div>
-                  <h3 className="text-white font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-sm text-zinc-500 leading-relaxed">
+                  <h3 className="text-white font-semibold mb-2 group-hover:text-green-50 transition-colors">{feature.title}</h3>
+                  <p className="text-sm text-zinc-500 leading-relaxed group-hover:text-zinc-400 transition-colors">
                     {feature.description}
                   </p>
                 </div>
@@ -474,27 +490,27 @@ export function LandingPage({
         {/* Pricing Section */}
         <section id="pricing" className="mb-32 scroll-mt-24">
           <div className="text-center mb-16">
-            <span className="inline-block px-3 py-1 text-xs bg-zinc-900 border border-zinc-800 rounded-full text-zinc-400 mb-4">
+            <span className="inline-block px-3 py-1 text-xs bg-amber-950/50 border border-amber-900/50 rounded-full text-amber-400 mb-4 hover:border-amber-800/50 transition-colors cursor-default">
               PRICING
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-balance">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-balance gradient-text-white">
               Simple, transparent pricing
             </h2>
-            <p className="text-zinc-400 max-w-2xl mx-auto">
+            <p className="text-zinc-400 max-w-2xl mx-auto leading-relaxed">
               Pay only for what you use. No subscriptions, no hidden fees.
             </p>
           </div>
 
           <div className="max-w-lg mx-auto">
-            <div className="relative bg-zinc-900/50 rounded-2xl border border-zinc-800 overflow-hidden">
+            <div className="relative bg-zinc-900/50 rounded-2xl border border-zinc-800 overflow-hidden hover:border-amber-900/30 transition-all duration-300 hover-glow">
               {/* Popular badge */}
-              <div className="absolute top-0 right-0 px-4 py-1.5 bg-amber-500 text-black text-xs font-semibold rounded-bl-xl">
+              <div className="absolute top-0 right-0 px-4 py-1.5 bg-gradient-to-r from-amber-500 to-amber-600 text-black text-xs font-bold rounded-bl-xl">
                 MOST POPULAR
               </div>
 
               <div className="p-8">
                 <div className="flex items-baseline gap-2 mb-2">
-                  <span className="text-5xl font-bold">$1</span>
+                  <span className="text-5xl font-bold gradient-text-amber">$1</span>
                   <span className="text-zinc-400">/ analysis</span>
                 </div>
                 <p className="text-zinc-500 mb-8">Per bill analyzed</p>
@@ -510,11 +526,11 @@ export function LandingPage({
                     "No subscription required",
                     "Results in seconds",
                   ].map((feature) => (
-                    <div key={feature} className="flex items-center gap-3">
-                      <div className="w-5 h-5 bg-green-500/20 rounded-full flex items-center justify-center">
+                    <div key={feature} className="flex items-center gap-3 group">
+                      <div className="w-5 h-5 bg-green-500/20 rounded-full flex items-center justify-center group-hover:bg-green-500/30 transition-colors">
                         <Check className="w-3 h-3 text-green-500" />
                       </div>
-                      <span className="text-zinc-300 text-sm">{feature}</span>
+                      <span className="text-zinc-300 text-sm group-hover:text-white transition-colors">{feature}</span>
                     </div>
                   ))}
                 </div>
@@ -522,7 +538,7 @@ export function LandingPage({
                 <Button
                   onClick={handleAnalyze}
                   disabled={!rawBillText.trim() || isProcessing}
-                  className="w-full bg-white text-black hover:bg-zinc-200 py-6 text-base font-medium transition-all"
+                  className="w-full bg-white text-black hover:bg-zinc-200 py-6 text-base font-medium transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-white/10"
                 >
                   Get Started
                   <ArrowRight className="w-4 h-4 ml-2" />
@@ -540,19 +556,19 @@ export function LandingPage({
 
         {/* Open Source Section */}
         <section id="docs" className="mb-20 scroll-mt-24">
-          <div className="flex flex-col md:flex-row items-center gap-8 p-8 bg-zinc-900/30 rounded-2xl border border-zinc-800/50 max-w-4xl mx-auto">
-            <div className="w-16 h-16 bg-zinc-800 rounded-2xl flex items-center justify-center shrink-0">
-              <Code className="w-8 h-8 text-zinc-400" />
+          <div className="group flex flex-col md:flex-row items-center gap-8 p-8 bg-zinc-900/30 rounded-2xl border border-zinc-800/50 max-w-4xl mx-auto hover:border-zinc-700/50 transition-all duration-300 hover-glow card-shine">
+            <div className="w-16 h-16 bg-zinc-800 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-zinc-700 transition-all duration-300">
+              <Code className="w-8 h-8 text-zinc-400 group-hover:text-white transition-colors" />
             </div>
             <div className="flex-1 text-center md:text-left">
-              <h3 className="text-xl font-semibold mb-2">Open Source Audit Logic</h3>
-              <p className="text-zinc-400 text-sm leading-relaxed">
+              <h3 className="text-xl font-semibold mb-2 group-hover:gradient-text-white transition-all">Open Source Audit Logic</h3>
+              <p className="text-zinc-400 text-sm leading-relaxed group-hover:text-zinc-300 transition-colors">
                 Our core analysis engine is built on open-source principles. Review our methodology, contribute improvements, or fork for your own use.
               </p>
             </div>
             <Button
               variant="outline"
-              className="border-zinc-700 text-white hover:bg-zinc-800/50 shrink-0 bg-transparent"
+              className="border-zinc-700 text-white hover:bg-zinc-800/50 shrink-0 bg-transparent hover:scale-105 transition-all"
             >
               <Globe className="w-4 h-4 mr-2" />
               View on GitHub

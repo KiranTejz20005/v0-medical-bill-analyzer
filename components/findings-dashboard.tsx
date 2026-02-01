@@ -15,6 +15,7 @@ import {
   CheckCircle,
   Triangle,
   ArrowRight,
+  ArrowLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { AnalysisResult, Finding } from "@/lib/types";
@@ -26,6 +27,8 @@ interface FindingsDashboardProps {
   onExportJson: () => void;
   onGenerateReport: () => void;
   onNewAudit: () => void;
+  onViewHistory: () => void;
+  onViewLogs: () => void;
 }
 
 type NavItem = "overview" | "deployments" | "findings" | "logs" | "settings";
@@ -36,6 +39,8 @@ export function FindingsDashboard({
   onExportJson,
   onGenerateReport,
   onNewAudit,
+  onViewHistory,
+  onViewLogs,
 }: FindingsDashboardProps) {
   const [activeNav, setActiveNav] = useState<NavItem>("findings");
   const [flaggedItems, setFlaggedItems] = useState<Set<string>>(new Set());
@@ -106,6 +111,8 @@ export function FindingsDashboard({
                 setActiveNav(item.id);
                 if (item.id === "overview") {
                   onBack();
+                } else if (item.id === "logs") {
+                  onViewLogs();
                 }
               }}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm mb-1 transition-all duration-200 ${
@@ -140,6 +147,14 @@ export function FindingsDashboard({
         <header className={`px-8 py-6 border-b border-zinc-800/50 bg-zinc-950/30 backdrop-blur-sm sticky top-0 z-20 ${mounted ? 'animate-fade-in-down' : 'opacity-0'}`}>
           <div className="flex items-start justify-between">
             <div>
+              <Button
+                variant="ghost"
+                onClick={onBack}
+                className="text-zinc-400 hover:text-white hover:bg-zinc-800/50 transition-all mb-4 -ml-2"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Summary
+              </Button>
               <h1 className="text-3xl font-bold mb-3">Detailed Findings</h1>
               <div className="flex items-center gap-4 text-xs text-zinc-500">
                 <span className="flex items-center gap-2">
