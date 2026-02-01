@@ -100,14 +100,17 @@ export function ResultsSummary({
           <div className="hidden md:flex items-center gap-8 text-sm text-zinc-400 ml-6">
             <button
               type="button"
-              onClick={onBack}
-              className="hover:text-white transition-colors"
+              className="text-white relative"
             >
               Overview
-            </button>
-            <button type="button" className="text-white relative">
-              Analysis
               <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-white rounded-full" />
+            </button>
+            <button 
+              type="button" 
+              onClick={onViewDetails}
+              className="hover:text-white transition-colors"
+            >
+              Analysis
             </button>
             <button
               type="button"

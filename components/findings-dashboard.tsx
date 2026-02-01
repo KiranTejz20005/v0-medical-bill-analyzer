@@ -51,11 +51,11 @@ export function FindingsDashboard({
     setMounted(true);
   }, []);
 
-  const navItems: { id: NavItem; label: string; icon: React.ReactNode }[] = [
-    { id: "overview", label: "Overview", icon: <LayoutGrid className="w-4 h-4" /> },
+  const navItems: { id: NavItem; label: string; icon: React.ReactNode; description?: string }[] = [
+    { id: "overview", label: "Overview", icon: <LayoutGrid className="w-4 h-4" />, description: "Analysis Summary" },
     { id: "deployments", label: "Deployments", icon: <Package className="w-4 h-4" /> },
-    { id: "findings", label: "Findings", icon: <FileText className="w-4 h-4" /> },
-    { id: "logs", label: "Logs", icon: <Clock className="w-4 h-4" /> },
+    { id: "findings", label: "Findings", icon: <FileText className="w-4 h-4" />, description: "Detailed Issues" },
+    { id: "logs", label: "Logs", icon: <Clock className="w-4 h-4" />, description: "Activity Log" },
     { id: "settings", label: "Settings", icon: <Settings className="w-4 h-4" /> },
   ];
 
