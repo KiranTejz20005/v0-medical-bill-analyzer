@@ -566,13 +566,19 @@ export function LandingPage({
                 Our core analysis engine is built on open-source principles. Review our methodology, contribute improvements, or fork for your own use.
               </p>
             </div>
-            <Button
-              variant="outline"
-              className="border-zinc-700 text-white hover:bg-zinc-800/50 shrink-0 bg-transparent hover:scale-105 transition-all"
+            <a
+              href="https://github.com/kiranlanke824/v0-medical-bill-analyzer"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              <Globe className="w-4 h-4 mr-2" />
-              View on GitHub
-            </Button>
+              <Button
+                variant="outline"
+                className="border-zinc-700 text-white hover:bg-zinc-800/50 shrink-0 bg-transparent hover:scale-105 transition-all"
+              >
+                <Globe className="w-4 h-4 mr-2" />
+                View on GitHub
+              </Button>
+            </a>
           </div>
         </section>
       </main>
@@ -629,7 +635,14 @@ export function LandingPage({
               © 2026 BILL ANALYZER INC. ALL RIGHTS RESERVED.
             </p>
             <div className="flex items-center gap-6 text-xs text-zinc-600">
-              <button type="button" className="hover:text-zinc-400 transition-colors">GitHub</button>
+              <a 
+                href="https://github.com/kiranlanke824/v0-medical-bill-analyzer" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-zinc-400 transition-colors"
+              >
+                GitHub
+              </a>
               <button type="button" className="hover:text-zinc-400 transition-colors">Twitter</button>
               <button type="button" className="hover:text-zinc-400 transition-colors">Discord</button>
             </div>
