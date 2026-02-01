@@ -230,7 +230,7 @@ export function LandingPage({
         <div className={`flex justify-center mb-10 ${mounted ? 'animate-fade-in-up' : 'opacity-0'}`}>
           <div className="group flex items-center gap-2 px-4 py-2 bg-zinc-900/50 border border-zinc-800 rounded-full hover:border-zinc-700 transition-colors cursor-pointer">
             <Sparkles className="w-4 h-4 text-amber-500" />
-            <span className="text-xs text-zinc-400">VERSION 2.0.1 IS LIVE</span>
+            <span className="text-xs text-zinc-400">VERSION 1.0 IS LIVE</span>
             <ArrowRight className="w-3 h-3 text-zinc-600 group-hover:translate-x-1 transition-transform" />
           </div>
         </div>
