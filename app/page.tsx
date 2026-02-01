@@ -192,9 +192,16 @@ export default function BillAnalyzerApp() {
     handleGenerateReport();
   }, [handleGenerateReport]);
 
+  // Handle cancel analysis
+  const handleCancelAnalysis = useCallback(() => {
+    setAppState("landing");
+    setIsProcessing(false);
+    setError(null);
+  }, []);
+
   // Render based on state
   if (appState === "loading") {
-    return <LoadingScreen stage={loadingStage} />;
+    return <LoadingScreen stage={loadingStage} onCancel={handleCancelAnalysis} />;
   }
 
   if (appState === "results" && analysisResult) {
