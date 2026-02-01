@@ -27,6 +27,8 @@ interface FindingsDashboardProps {
   onExportJson: () => void;
   onGenerateReport: () => void;
   onNewAudit: () => void;
+  onViewHistory: () => void;
+  onViewLogs: () => void;
 }
 
 type NavItem = "overview" | "deployments" | "findings" | "logs" | "settings";
@@ -37,6 +39,8 @@ export function FindingsDashboard({
   onExportJson,
   onGenerateReport,
   onNewAudit,
+  onViewHistory,
+  onViewLogs,
 }: FindingsDashboardProps) {
   const [activeNav, setActiveNav] = useState<NavItem>("findings");
   const [flaggedItems, setFlaggedItems] = useState<Set<string>>(new Set());
@@ -107,6 +111,8 @@ export function FindingsDashboard({
                 setActiveNav(item.id);
                 if (item.id === "overview") {
                   onBack();
+                } else if (item.id === "logs") {
+                  onViewLogs();
                 }
               }}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm mb-1 transition-all duration-200 ${

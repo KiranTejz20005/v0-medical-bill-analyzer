@@ -29,6 +29,7 @@ import {
   CloudOff,
   Scale,
   BookOpen,
+  Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { sampleBills } from "@/lib/analysis-engine";
@@ -38,6 +39,8 @@ interface LandingPageProps {
   onFileUpload: (file: File) => void;
   isProcessing: boolean;
   error: string | null;
+  onViewHistory: () => void;
+  historyCount: number;
 }
 
 export function LandingPage({
@@ -45,6 +48,8 @@ export function LandingPage({
   onFileUpload,
   isProcessing,
   error,
+  onViewHistory,
+  historyCount,
 }: LandingPageProps) {
   const [rawBillText, setRawBillText] = useState("");
   const [isDragging, setIsDragging] = useState(false);
@@ -200,8 +205,18 @@ export function LandingPage({
             </a>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="hidden sm:flex items-center gap-2 text-xs text-zinc-500 mr-4">
+        <div className="flex items-center gap-4">
+          {historyCount > 0 && (
+            <Button
+              variant="outline"
+              onClick={onViewHistory}
+              className="border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800/50 bg-transparent transition-all text-sm"
+            >
+              <Clock className="w-4 h-4 mr-2" />
+              History ({historyCount})
+            </Button>
+          )}
+          <span className="hidden sm:flex items-center gap-2 text-xs text-zinc-500">
             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
             All systems operational
           </span>

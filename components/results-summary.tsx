@@ -10,6 +10,7 @@ interface ResultsSummaryProps {
   onViewDetails: () => void;
   onExportPdf: () => void;
   onBack: () => void;
+  onViewHistory: () => void;
 }
 
 export function ResultsSummary({
@@ -17,6 +18,7 @@ export function ResultsSummary({
   onViewDetails,
   onExportPdf,
   onBack,
+  onViewHistory,
 }: ResultsSummaryProps) {
   const [mounted, setMounted] = useState(false);
   const [anomalyCount, setAnomalyCount] = useState(0);
@@ -109,6 +111,7 @@ export function ResultsSummary({
             </button>
             <button
               type="button"
+              onClick={onViewHistory}
               className="hover:text-white transition-colors"
             >
               History
