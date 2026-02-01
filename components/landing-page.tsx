@@ -353,7 +353,7 @@ export function LandingPage({
           <div className="flex items-center gap-8">
             <div>
               <p className="text-[10px] text-zinc-500 mb-1 tracking-wider">MODEL</p>
-              <p className="text-sm text-white font-medium">Healthcare-Llama 3 (V1)</p>
+              <p className="text-sm text-white font-medium">Gemini 2.5 Flash </p>
             </div>
             <div className="hidden sm:block w-px h-8 bg-zinc-800" />
             <div>
