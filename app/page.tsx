@@ -57,38 +57,52 @@ export default function BillAnalyzerApp() {
     setLogs((prev) => [newLog, ...prev]);
   }, []);
 
-  // Load history from localStorage on mount
+// Load history from localStorage on mount
   useEffect(() => {
+  // Helper to safely parse JSON from localStorage
+  const safeJsonParse = <T,>(key: string): T | null => {
     try {
-      const savedHistory = localStorage.getItem("billanalyzer-history");
-      const savedLogs = localStorage.getItem("billanalyzer-logs");
-      const savedResultsData = localStorage.getItem("billanalyzer-results");
-      
-      if (savedHistory) {
-        const parsed = JSON.parse(savedHistory);
-        setAnalysisHistory(parsed.map((item: AnalysisHistoryItem) => ({
-          ...item,
-          timestamp: new Date(item.timestamp),
-        })));
-      }
-      if (savedLogs) {
-        const parsed = JSON.parse(savedLogs);
-        setLogs(parsed.map((item: LogEntry) => ({
-          ...item,
-          timestamp: new Date(item.timestamp),
-        })));
-      }
-      if (savedResultsData) {
-        const parsed = JSON.parse(savedResultsData);
-        const map = new Map<string, AnalysisResult>();
-        Object.entries(parsed).forEach(([key, value]) => {
-          map.set(key, value as AnalysisResult);
-        });
-        setSavedResults(map);
-      }
+      const data = localStorage.getItem(key);
+      if (!data) return null;
+      return JSON.parse(data) as T;
     } catch (e) {
-      console.error("Failed to load saved data:", e);
+      console.error(`Failed to parse ${key}, clearing corrupted data:`, e);
+      localStorage.removeItem(key);
+      return null;
     }
+  };
+
+  try {
+    const savedHistory = safeJsonParse<AnalysisHistoryItem[]>("billanalyzer-history");
+    const savedLogs = safeJsonParse<LogEntry[]>("billanalyzer-logs");
+    const savedResultsData = safeJsonParse<Record<string, AnalysisResult>>("billanalyzer-results");
+  
+    if (savedHistory && Array.isArray(savedHistory)) {
+      setAnalysisHistory(savedHistory.map((item) => ({
+        ...item,
+        timestamp: new Date(item.timestamp),
+      })));
+    }
+    if (savedLogs && Array.isArray(savedLogs)) {
+      setLogs(savedLogs.map((item) => ({
+        ...item,
+        timestamp: new Date(item.timestamp),
+      })));
+    }
+    if (savedResultsData && typeof savedResultsData === 'object') {
+      const map = new Map<string, AnalysisResult>();
+      Object.entries(savedResultsData).forEach(([key, value]) => {
+        map.set(key, value as AnalysisResult);
+      });
+      setSavedResults(map);
+    }
+  } catch (e) {
+    console.error("Failed to load saved data:", e);
+    // Clear all potentially corrupted data
+    localStorage.removeItem("billanalyzer-history");
+    localStorage.removeItem("billanalyzer-logs");
+    localStorage.removeItem("billanalyzer-results");
+  }
   }, []);
 
   // Save history to localStorage when it changes

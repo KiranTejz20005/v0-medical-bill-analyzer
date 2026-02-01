@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertTriangle, UserCircle, ArrowUpRight, Download, Check, ArrowLeft, Triangle } from "lucide-react";
+import { AlertTriangle, UserCircle, ArrowUpRight, Download, Check, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { AnalysisResult } from "@/lib/types";
 import { Logo } from "@/components/logo";
