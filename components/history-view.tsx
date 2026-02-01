@@ -10,8 +10,6 @@ import {
   ChevronRight,
   Trash2,
   Search,
-  Filter,
-  Triangle, // Import Triangle here
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { AnalysisHistoryItem } from "@/lib/types";

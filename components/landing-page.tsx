@@ -3,7 +3,6 @@
 import React from "react";
 import { useState, useRef, useCallback, useEffect } from "react";
 import {
-  Upload,
   Plus,
   AlertTriangle,
   Shield,
@@ -16,7 +15,6 @@ import {
   BarChart3,
   Check,
   ArrowRight,
-  Sparkles,
   Brain,
   Database,
   FileText,
@@ -26,9 +24,7 @@ import {
   Fingerprint,
   CloudOff,
   Scale,
-  BookOpen,
   Clock,
-  Triangle, // Declare Triangle here
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { sampleBills } from "@/lib/analysis-engine";

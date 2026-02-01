@@ -9,8 +9,6 @@ import {
   CheckCircle,
   Trash2,
   Download,
-  Filter,
-  Triangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { LogEntry } from "@/lib/types";
